@@ -61,23 +61,6 @@ python -m pip install ../
 
 The Library is broken up into different packages that are described in <<sdk-packages>> below. Each package contains a README.adoc file that describes the purpose of the package and how to use it. Packages are organized into the following directories:
 
-.Package Folders
-[#pkg-folders,width=100%,cols="20%,80%",options="header"]
-|===
-
-| Folder | Purpose
-
-| `*builder*` or `*factory*`
-| Contains factory methods for creating uProtocol data types.
-
-| `*serializer*`
-| Contains serializers to convert the objects into byte or string form representation of said object.
-
-| `*validator*`
-| Contains validators to validate the data types and report errors if the objects are missing or incorrect.
-
-|===
-
 
 .SDK Packages
 [#sdk-packages,width=100%,cols="20%,80%",options="header"]

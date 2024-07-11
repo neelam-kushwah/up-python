@@ -28,3 +28,77 @@ Below are the list of the classes and interfaces that are part of the uProtocol 
 | uProtocol Attributes validator that ensures that the publish, notification, request, and response messages are built with the correct information.
 
 |===
+
+== Examples
+
+=== Create Transport
+
+[,python]
+----
+class HappyUTransport(UTransport):
+    async def close(self) -> None:
+        pass
+
+    async def send(self, message):
+        return UStatus(code=UCode.INVALID_ARGUMENT if message is None else UCode.OK)
+
+    async def register_listener(self, source_filter: UUri, listener: UListener, sink_filter: UUri = None) -> UStatus:
+        listener.on_receive(UMessage())
+        return UStatus(code=UCode.OK)
+
+    async def unregister_listener(self, source_filter: UUri, listener, sink_filter: UUri = None):
+        return UStatus(code=UCode.OK)
+
+    def get_source(self):
+        return UUri()
+----
+
+=== Build Messages using UMessageBuilder
+
+==== Build Publish Message
+[,python]
+----
+topic : UUri = UUri( ue_id=4, ue_version_major=1, resource_id=0x8000)
+UMessageBuilder.publish(topic).build()
+
+# to add payload, pack your proto message in UPayload
+# to pack UUri()
+UMessageBuilder.publish(topic).build_from_upayload(UPayload.pack(UUri()))
+
+----
+==== Build Notification Message
+[,python]
+----
+topic : UUri = UUri( ue_id=4, ue_version_major=1, resource_id=0x8000)
+destination_uri : UUri = UUri( ue_id=3, ue_version_major=1)
+
+UMessageBuilder.notification(topic, destination).build()
+
+----
+==== Build Request Message
+[,python]
+----
+source : UUri = UUri( ue_id=4, ue_version_major=1, resource_id=0x8000)
+sink : UUri = UUri( ue_id=3, ue_version_major=1)
+#1000 is ttl here
+UMessageBuilder.request(source, sink, 1000).build()
+
+----
+
+==== Build Response Message
+[,python]
+----
+source : UUri = UUri( ue_id=4, ue_version_major=1, resource_id=0x8000)
+sink : UUri = UUri( ue_id=3, ue_version_major=1)
+reqid : UUID = Factories.UPROTOCOL.create()
+UMessageBuilder.response(source, sink, reqid).build()
+
+----
+
+==== Build Response Message from Request
+[,python]
+----
+
+UMessageBuilder.response_for_request(request.attributes).build()
+
+----
